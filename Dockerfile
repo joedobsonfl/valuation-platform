@@ -8,4 +8,6 @@ WORKDIR /var/www/html
 
 COPY public/ /var/www/html/
 
+ENV APACHE_DOCUMENT_ROOT /var/www/html
+
 EXPOSE 80
