@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: valuation-web
+    env: php
+    plan: starter
+    rootDir: .
+    buildCommand: "composer install --no-dev --optimize-autoloader"
+    startCommand: "php -S 0.0.0.0:$PORT -t public"
+    envVars:
+      - key: APP_ENV
+        value: development

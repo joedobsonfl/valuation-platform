@@ -1,0 +1,8 @@
+{
+  "name": "phillips/valuation-platform",
+  "description": "Private company valuation and M&A operating platform",
+  "type": "project",
+  "require": {
+    "php": "^8.2"
+  }
+}
