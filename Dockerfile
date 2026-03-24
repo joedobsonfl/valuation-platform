@@ -8,8 +8,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN a2enmod rewrite
 
-WORKDIR /var/www/html
+WORKDIR /var/www
 
 COPY public/ /var/www/html/
+COPY src/ /var/www/src/
+COPY config/ /var/www/config/
 
 EXPOSE 80
