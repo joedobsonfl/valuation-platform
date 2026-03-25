@@ -1,5 +1,8 @@
 <?php
+<?php
 declare(strict_types=1);
+
+echo "<!-- NEW_COMPANY_VERSION_2 -->";
 
 require_once '/var/www/src/Database.php';
 
