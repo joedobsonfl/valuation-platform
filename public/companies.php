@@ -59,6 +59,7 @@ try {
             <table>
                 <thead>
                     <tr>
+                        <th>Actions</th>
                         <th>Name</th>
                         <th>Legal Name</th>
                         <th>Industry</th>
@@ -70,6 +71,9 @@ try {
                 <tbody>
                     <?php foreach ($companies as $company): ?>
                         <tr>
+                            <td>
+                                <a href="/edit_company.php?id=<?= (int)$company['id'] ?>">Edit</a>
+                            </td>
                             <td>
                                 <a href="/company.php?id=<?= (int)$company['id'] ?>">
                                     <?= htmlspecialchars((string)$company['name']) ?>

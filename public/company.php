@@ -65,6 +65,7 @@ if (!$company) {
 
         <div class="actions" style="margin-top: 24px;">
             <a href="/companies.php">Back to Companies</a>
+            <a href="/edit_company.php?id=<?= (int)$company['id'] ?>">Edit Company</a>
 
             <form method="post" action="/delete_company.php" onsubmit="return confirm('Delete this company? This cannot be undone.');">
                 <input type="hidden" name="id" value="<?= (int)$company['id'] ?>">
