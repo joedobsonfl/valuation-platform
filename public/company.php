@@ -25,6 +25,21 @@ if (!$company) {
     http_response_code(404);
     exit('Company not found.');
 }
+
+$diligenceStmt = $pdo->prepare("
+    SELECT id, category, subcategory, title, description, source_type, priority, status, owner, due_date, created_at
+    FROM diligence_items
+    WHERE company_id = :company_id
+    ORDER BY category ASC, priority DESC, created_at DESC
+");
+$diligenceStmt->execute([':company_id' => $id]);
+$diligenceItems = $diligenceStmt->fetchAll();
+
+$groupedDiligence = [];
+foreach ($diligenceItems as $item) {
+    $groupedDiligence[$item['category']][] = $item;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -72,6 +87,60 @@ if (!$company) {
                 <button type="submit">Delete Company</button>
             </form>
         </div>
+    </div>
+    <div class="section">
+        <h2>Diligence Items</h2>
+
+        <p>
+            <a class="button" href="/add_diligence_item.php?company_id=<?= (int)$company['id'] ?>">Add Diligence Item</a>
+        </p>
+
+        <?php if (!$diligenceItems): ?>
+            <p>No diligence items yet.</p>
+        <?php else: ?>
+            <?php foreach ($groupedDiligence as $category => $items): ?>
+                <h3><?= htmlspecialchars((string)$category) ?></h3>
+                <table style="width:100%; border-collapse: collapse; margin-bottom: 24px;">
+                    <thead>
+                        <tr>
+                            <th style="text-align:left; border-bottom:1px solid #ddd; padding:8px;">Title</th>
+                            <th style="text-align:left; border-bottom:1px solid #ddd; padding:8px;">Priority</th>
+                            <th style="text-align:left; border-bottom:1px solid #ddd; padding:8px;">Status</th>
+                            <th style="text-align:left; border-bottom:1px solid #ddd; padding:8px;">Owner</th>
+                            <th style="text-align:left; border-bottom:1px solid #ddd; padding:8px;">Due Date</th>
+                            <th style="text-align:left; border-bottom:1px solid #ddd; padding:8px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($items as $item): ?>
+                            <tr>
+                                <td style="border-bottom:1px solid #eee; padding:8px;">
+                                    <strong><?= htmlspecialchars((string)$item['title']) ?></strong>
+                                    <?php if (!empty($item['description'])): ?>
+                                        <div style="margin-top:4px; color:#444;">
+                                            <?= nl2br(htmlspecialchars((string)$item['description'])) ?>
+                                        </div>
+                                    <?php endif; ?>
+                                </td>
+                                <td style="border-bottom:1px solid #eee; padding:8px;"><?= htmlspecialchars((string)$item['priority']) ?></td>
+                                <td style="border-bottom:1px solid #eee; padding:8px;"><?= htmlspecialchars((string)$item['status']) ?></td>
+                                <td style="border-bottom:1px solid #eee; padding:8px;"><?= htmlspecialchars((string)($item['owner'] ?? '')) ?></td>
+                                <td style="border-bottom:1px solid #eee; padding:8px;"><?= htmlspecialchars((string)($item['due_date'] ?? '')) ?></td>
+                                <td style="border-bottom:1px solid #eee; padding:8px; white-space: nowrap;">
+                                    <a href="/edit_diligence_item.php?id=<?= (int)$item['id'] ?>">Edit</a>
+                                    &nbsp;|&nbsp;
+                                    <form method="post" action="/delete_diligence_item.php" style="display:inline;" onsubmit="return confirm('Delete this diligence item?');">
+                                        <input type="hidden" name="id" value="<?= (int)$item['id'] ?>">
+                                        <input type="hidden" name="company_id" value="<?= (int)$company['id'] ?>">
+                                        <button type="submit" style="border:none; background:none; color:#00f; padding:0; cursor:pointer;">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </div>
 </body>
 </html>
