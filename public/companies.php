@@ -70,7 +70,11 @@ try {
                 <tbody>
                     <?php foreach ($companies as $company): ?>
                         <tr>
-                            <td><?= htmlspecialchars((string)$company['name']) ?></td>
+                            <td>
+                                <a href="/company.php?id=<?= (int)$company['id'] ?>">
+                                    <?= htmlspecialchars((string)$company['name']) ?>
+                                </a>
+                            </td>
                             <td><?= htmlspecialchars((string)($company['legal_name'] ?? '')) ?></td>
                             <td><?= htmlspecialchars((string)($company['industry'] ?? '')) ?></td>
                             <td>

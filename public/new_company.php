@@ -20,23 +20,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         try {
             $pdo = Database::connection();
-            $stmt = $pdo->prepare("
-                INSERT INTO companies
-                (name, legal_name, industry, headquarters_city, headquarters_state, headquarters_country, status)
-                VALUES
-                (:name, :legal_name, :industry, :city, :state, :country, 'active')
-            ");
-            $stmt->execute([
-                ':name' => $name,
-                ':legal_name' => $legalName !== '' ? $legalName : null,
-                ':industry' => $industry !== '' ? $industry : null,
-                ':city' => $city !== '' ? $city : null,
-                ':state' => $state !== '' ? $state : null,
-                ':country' => $country !== '' ? $country : 'USA',
-            ]);
 
-            header('Location: /companies.php');
-            exit;
+            $check = $pdo->prepare("
+                SELECT id
+                FROM companies
+                WHERE LOWER(name) = LOWER(:name)
+                LIMIT 1
+            ");
+            $check->execute([':name' => $name]);
+            $existing = $check->fetch();
+
+            if ($existing) {
+                $error = 'A company with that name already exists.';
+            } else {
+                $stmt = $pdo->prepare("
+                    INSERT INTO companies
+                    (name, legal_name, industry, headquarters_city, headquarters_state, headquarters_country, status)
+                    VALUES
+                    (:name, :legal_name, :industry, :city, :state, :country, 'active')
+                ");
+                $stmt->execute([
+                    ':name' => $name,
+                    ':legal_name' => $legalName !== '' ? $legalName : null,
+                    ':industry' => $industry !== '' ? $industry : null,
+                    ':city' => $city !== '' ? $city : null,
+                    ':state' => $state !== '' ? $state : null,
+                    ':country' => $country !== '' ? $country : 'USA',
+                ]);
+
+                header('Location: /companies.php');
+                exit;
+            }
         } catch (Throwable $e) {
             $error = $e->getMessage();
         }
