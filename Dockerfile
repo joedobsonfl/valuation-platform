@@ -12,6 +12,5 @@ WORKDIR /var/www
 
 COPY public/ /var/www/html/
 COPY src/ /var/www/src/
-COPY config/ /var/www/config/
 
 EXPOSE 80
